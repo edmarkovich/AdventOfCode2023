@@ -17,6 +17,10 @@ var
         tokens: TStringArray;
         num, max: integer;
 begin
+    checkColor[0] := 0  ;
+    checkColor[1] := 0 ;
+    checkColor[2] := 0;
+
     tokens := trim(line).split(' ');
     num := StrToInt(tokens[0]);
     case tokens[1] of
@@ -69,14 +73,17 @@ begin
                         ca[j] := max(ca_iter[j], ca[j]);
                 end;
         end;
+        writeln(line, ca[2]);
         processGameLine := ca[0]*ca[1]*ca[2];
 end;
 
 var
         inputFile: text;
         line: ansistring;
-        sum: integer = 0;
+        sum: longinteger = 0;
 begin
+
+
         Assign(inputFile, 'day2.input');
         reset(inputFile);
 
