@@ -17,17 +17,17 @@ var
         tokens: TStringArray;
         num, max: integer;
 begin
-    checkColor[0] := 0  ;
-    checkColor[1] := 0 ;
-    checkColor[2] := 0;
+        checkColor[0] := 0;
+        checkColor[1] := 0;
+        checkColor[2] := 0;
 
-    tokens := trim(line).split(' ');
-    num := StrToInt(tokens[0]);
-    case tokens[1] of
-        'red'  : checkColor[0] := num;
-        'green': checkColor[1] := num;
-        'blue' : checkColor[2] := num;
-    end;
+        tokens := trim(line).split(' ');
+        num := StrToInt(tokens[0]);
+        case tokens[1] of
+                'red'  : checkColor[0] := num;
+                'green': checkColor[1] := num;
+                'blue' : checkColor[2] := num;
+        end;
 end;
 
 function checkIteration(line: ansistring) : ColorArray;
@@ -73,14 +73,13 @@ begin
                         ca[j] := max(ca_iter[j], ca[j]);
                 end;
         end;
-        writeln(line, ca[2]);
         processGameLine := ca[0]*ca[1]*ca[2];
 end;
 
 var
         inputFile: text;
         line: ansistring;
-        sum: longinteger = 0;
+        sum: longint = 0;
 begin
 
 
