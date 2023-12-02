@@ -1,5 +1,5 @@
-program Day1_2;
-uses Crt, StrUtils;
+program Day1;
+uses StrUtils;
 
 function firstAndLastNum(str: string) : integer;
 var
@@ -14,46 +14,30 @@ begin
         for i := 1 to length(digits_text) do
         begin
                 a := pos(digits_text[i], str);
-
-                if a>0 then
+                if (a>0) and ((first_pos = -1) or (first_pos > a)) then
                 begin
-                     if (first_pos = -1) or (first_pos > a) then
-                     begin
                         first_pos := a;
                         first := i;
                         if first > 9 then first := first -9;
-                     end;
                 end;
 
                 a := rpos(digits_text[i], str);
-                if a>0 then
+                if (a>0) and ((last_pos = -1) or (last_pos < a)) then
                 begin
-                     if (last_pos = -1) or (last_pos < a) then
-                     begin
                         last_pos := a;
                         last := i;
                         if last > 9 then last := last -9;
-                     end;
                 end;
-
         end;
         firstAndLastNum := (first*10) + last;
-        writeln(firstAndLastNum,'     ', str);
 end;
 
 var
         inputFile: text;
         line: string;
-        sum: longint;
-        temp: integer;
+        sum: longint = 0;
 
 begin
-        //writeln(firstAndLastNum('sxoneightoneckk9ldctxxnffqnzmjqvj'));
-        //Exit;
-
-
-        ClrScr();
-        sum :=0;
         Assign(inputFile, 'day1.input');
         Reset(inputFile);
 
@@ -65,5 +49,4 @@ begin
 
         close(inputFile);
         writeln(sum);
-
 end.
