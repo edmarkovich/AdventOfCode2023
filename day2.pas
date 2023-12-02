@@ -1,5 +1,5 @@
 program Day2;
-uses SysUtils;
+uses SysUtils, Math;
 
 
 function parseGameNumber(line: ansistring) : integer;
@@ -8,10 +8,11 @@ var
 begin
         tokens := line.split(' ');
         parseGameNumber := StrToInt(tokens[1]);
-        writeln('Game number ', parseGameNumber);
 end;
 
-function checkColor(line: ansistring) : boolean;
+type ColorArray = array[0..2] of integer ;
+
+function checkColor(line: ansistring) : ColorArray;
 var
         tokens: TStringArray;
         num, max: integer;
@@ -19,67 +20,59 @@ begin
     tokens := trim(line).split(' ');
     num := StrToInt(tokens[0]);
     case tokens[1] of
-        'red'  : max := 12;
-        'green': max := 13;
-        'blue' : max := 14;
-    else
-        writeln('WTF color ', tokens[1]);
+        'red'  : checkColor[0] := num;
+        'green': checkColor[1] := num;
+        'blue' : checkColor[2] := num;
     end;
-
-    writeln(tokens[1],' ',num, ' ', max);
-    checkColor := num <= max;
 end;
 
-function checkIteration(line: ansistring) : boolean;
+function checkIteration(line: ansistring) : ColorArray;
 var
         tokens: TStringArray;
-        i: integer;
+        i,j: integer;
+        ca_one : ColorArray;
 begin
         // process the individual colors of this iteration
+        checkIteration[0] := 0;
+        checkIteration[1] := 0;
+        checkIteration[2] := 0;
         tokens := trim(line).split(',');
         for i := 0 to length(tokens)-1 do
         begin
-                if not checkColor(tokens[i]) then
+                ca_one :=  checkColor(tokens[i]) ;
+                for j := 0 to 2 do
                 begin
-                        checkIteration := false;
-                        Exit
-                end
+                        checkIteration[j] := max(checkIteration[j], ca_one[j]);
+                end;
         end;
-        checkIteration := true;
 end;
 
 function processGameLine(line: ansistring) : integer;
 var
         tokens,tokens2: TStringArray;
         gameNum: integer;
-        i: integer;
+        i,j: integer;
+        ca : ColorArray  = (0,0,0);
+        ca_iter: ColorArray;
 begin
         // Get the game number
         tokens := line.split(':');
         gameNum := parseGameNumber(tokens[0]);
 
         // Break out the iterations of this game
-        writeln('Iterations before split by ;', tokens[1]);
         tokens2 := tokens[1].split(';');
-        writeln('Iterations.... ', length(tokens2));
         for i := 0 to length(tokens2)-1 do
         begin
-                writeln('Iteration ', i, ' ', tokens2[i]);
-                if not checkIteration(tokens2[i]) then
+                ca_iter := checkIteration(tokens2[i]) ;
+                for j := 0 to 2 do
                 begin
-                        processGameLine := 0;
-                        Exit
-                end
+                        ca[j] := max(ca_iter[j], ca[j]);
+                end;
         end;
-        processGameLine := gameNum;
+        processGameLine := ca[0]*ca[1]*ca[2];
 end;
 
 var
-        line1: ansistring = 'Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green' ;
-        line2: ansistring = 'Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue'  ;
-        line3: ansistring = 'Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red' ;
-        line4: ansistring = 'Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red';
-        line5: ansistring = 'Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green'        ;
         inputFile: text;
         line: ansistring;
         sum: integer = 0;
@@ -89,7 +82,7 @@ begin
 
         while not eof(inputFile) do
         begin
-                readld(inputFile, line);
+                readln(inputFile, line);
                 sum := sum + processGameLine(line);
         end;
         writeln(sum);
