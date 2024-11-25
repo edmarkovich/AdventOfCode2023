@@ -26,12 +26,32 @@ def find_start(data):
 def move_and_print(stdscr, data, row, col):
     stdscr.move(row,col)
     stdscr.addstr(data[row][col])
+    stdscr.refresh()
+    stdscr.getch()
+
+def go_up(stdscr, data, row, col):
+    if row == 0 : return False
+    row = row -1
+
+    move_and_print(stdscr, data, row, col)
+    if data[row][col] not in "S║╔╗": return False
+
+
+    move_and_print(stdscr, data, row, col)
+
+    if data[row][col] == "S": return True
+
+    if data[row][col] == "║": go_up(stdscr, data, row, col)
+    if data[row][col] == "╔": go_right(stdscr, data, row, col)
+    if data[row][col] == "╗": go_left(stdscr, data, row, col)
+
+
 
 def main(stdscr):
     data = read_into_array()
     (row,col) = find_start(data)
+
     move_and_print(stdscr, data, row, col)
-    stdscr.refresh()
-    stdscr.getch()
+    go_up(stdscr, data, row, col)
 
 curses.wrapper(main)
