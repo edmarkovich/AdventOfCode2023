@@ -3,6 +3,7 @@ import time
 import sys
 sys.setrecursionlimit(150*150)
 
+steps = 0
 def sexy_char(char):
             if char == ".": char = " "
             if char == "L": char = "╚"
@@ -28,6 +29,8 @@ def find_start(data):
             if data[i][j]=="S": return (i,j)
 
 def move_and_print(stdscr, data, row, col, clear = False, color=2):
+    global steps
+    steps = steps + 1
     stdscr.move(row,col)
     if clear:
         stdscr.addstr(" ")
@@ -104,8 +107,11 @@ def main(stdscr):
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     (row,col) = find_start(data)
 
+    global steps 
+    steps = 0
     move_and_print(stdscr, data, row, col)
     go_up(stdscr, data, row, col)
     stdscr.getch()
 
 curses.wrapper(main)
+print(steps, steps /2)
