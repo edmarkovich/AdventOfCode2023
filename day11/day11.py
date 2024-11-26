@@ -28,10 +28,11 @@ def get_distance(gal1, gal2, missing):
 
     dist = (row2-row1) + (col2-col1)
 
+    time_factor = 1000000-1
     for row in missing[0]:
-        if row1 < row < row2: dist = dist +1
+        if row1 < row < row2: dist = dist +time_factor
     for col in missing[1]:
-        if col1 < col < col2: dist = dist +1
+        if col1 < col < col2: dist = dist +time_factor
 
     return dist
 
