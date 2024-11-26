@@ -4,8 +4,9 @@ import sys
 sys.setrecursionlimit(150*150)
 
 steps = 0
+realPipes = []
 def sexy_char(char):
-            if char == ".": char = " "
+            if char == ".": char = "X"
             if char == "L": char = "╚"
             if char == "J": char = "╝"
             if char == "7": char = "╗"
@@ -30,6 +31,7 @@ def find_start(data):
 
 def move_and_print(stdscr, data, row, col, clear = False, color=2):
     global steps
+    global realPipes
     steps = steps + 1
     stdscr.move(row,col)
     if clear:
@@ -37,7 +39,8 @@ def move_and_print(stdscr, data, row, col, clear = False, color=2):
     else:
         stdscr.addstr(data[row][col], curses.color_pair(color))
     stdscr.refresh()
-    if color == 2 : time.sleep(0.001)
+    if not clear and color == 2:
+        realPipes.append((row,col))    
 
 def go_up(stdscr, data, row, col):
     if row == 0 : return False
@@ -110,7 +113,31 @@ def main(stdscr):
     global steps 
     steps = 0
     move_and_print(stdscr, data, row, col)
-    go_up(stdscr, data, row, col)
+    go_down(stdscr, data, row, col)
+
+    inner = 0
+    curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+    for row in range(0, len(data)):
+        inside = False
+        last = ""
+        for col in range (0, len(data[row])):
+            if (row, col) in realPipes:
+                if data[row][col] == "║":
+                    inside = not inside
+                elif data[row][col] in "╚╔":
+                    last =  data[row][col] 
+                elif data[row][col] == "╝" and last == "╔":
+                    inside = not inside
+                elif data[row][col] == "╗" and last == "╚":
+                    inside = not inside
+            if inside and (row,col) not in realPipes:
+                move_and_print(stdscr, data, row, col, False, 3)
+                inner = inner + 1
+
+
+
+
+    steps = inner
     stdscr.getch()
 
 curses.wrapper(main)
